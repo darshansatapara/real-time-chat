@@ -1,0 +1,69 @@
+/* AdSection.css */
+
+/* Styles for desktop screens */
+.ad-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.ad-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-gap: 20px;
+}
+
+.ad {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ad img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.ad-details h3 {
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+.ad-details p {
+  font-size: 14px;
+}
+.adheading{
+  align-items: center;
+}
+/* Media queries for responsiveness */
+
+/* Tablet */
+@media screen and (max-width: 1024px) {
+  .ad-container {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+/* Mobile */
+@media screen and (max-width: 768px) {
+  .ad-container {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+/* Additional styles for smaller devices (optional) */
+@media screen and (max-width: 480px) {
+  .ad {
+    padding: 15px;
+  }
+
+  .ad-details h3 {
+    font-size: 16px;
+  }
+
+  .ad-details p {
+    font-size: 12px;
+  }
+}

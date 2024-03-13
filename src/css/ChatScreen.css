@@ -1,0 +1,58 @@
+/* ChatScreen.css */
+
+.chat-container {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .chat-header {
+    margin-bottom: 20px;
+  }
+  
+  .chat-header h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .message-container {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .message {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .message strong {
+    font-weight: bold;
+    color: #007bff;
+  }
+  
+  .message input[type="text"] {
+    width: calc(100% - 80px);
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .message button[type="submit"] {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .message button[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+  

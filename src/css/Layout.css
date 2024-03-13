@@ -1,0 +1,35 @@
+/* Layout.css */
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr; /* By default, show only one column */
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Media queries for tablet screens */
+@media screen and (min-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr 1fr; /* For tablets, split into two columns */
+  }
+}
+
+/* Media queries for desktop screens */
+@media screen and (min-width: 1024px) {
+  .layout {
+    grid-template-columns: 0fr auto 0fr; /* Default layout for desktops */
+  }
+}
+
+/* Additional styles for mobile screens */
+@media screen and (max-width: 480px) {
+  .layout {
+    grid-template-columns: 1fr; /* For mobile, revert to single column layout */
+  }
+
+  .layout > div:nth-child(2),
+  .layout > div:nth-child(3) {
+    display: none; /* Hide ChatScreen and ClubsInfo components */
+  }
+}
+
