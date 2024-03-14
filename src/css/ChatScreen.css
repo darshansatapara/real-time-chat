@@ -1,58 +1,75 @@
-/* ChatScreen.css */
+body {
+  background-image: linear-gradient(rgb(165, 165, 164), rgb(5, 5, 5));
+  margin: 0;
+}
+.comunitychat {
+  border-radius: 20px;  
+}
 
-.chat-container {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 20px;
-    background-color: #f9f9f9;
-  }
+.Chathead {
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  height: 50px;
+}
+
+.container {
+  max-width: 955px;
+  background-image: linear-gradient(
+    rgb(49, 48, 48),
+    rgb(8, 7, 7),
+    rgba(160, 160, 160, 0.43)
+  );
+  margin: auto;
+  height: 81vh;
+  border: 2px solid rgb(174, 171, 168);
+  border-radius: 10px;
+  margin-bottom: 5px;
+  overflow-y: auto;
+}
+
+.container::-webkit-scrollbar {
+  display: none;
+}
+
+.message {
+  background-color: rgb(218, 213, 213);
+  width: 24%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid gray;
+  margin: 17px 12px;
+}
+.left {
+  clear: both;
+  float: left;
+}
+.right {
+  clear: both;
+  float: right;
+}
+
+input[type="text" i] {
+  width: 89%;
+  padding: 5px;
+  height: 25px;
+  color: white;
+  font-weight: 500;
+  background-color: rgba(40, 40, 40, 0.772);
+  border-radius: 10px;
+  border: 1px solid white;
+  font-size: medium;
+  font-family: sans-serif;
   
-  .chat-header {
-    margin-bottom: 20px;
-  }
-  
-  .chat-header h2 {
-    margin: 0;
-    font-size: 24px;
-    color: #333;
-  }
-  
-  .message-container {
-    max-height: 300px;
-    overflow-y: auto;
-  }
-  
-  .message {
-    margin-bottom: 10px;
-    padding: 10px;
-    background-color: #ffffff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .message strong {
-    font-weight: bold;
-    color: #007bff;
-  }
-  
-  .message input[type="text"] {
-    width: calc(100% - 80px);
-    padding: 10px;
-    margin-right: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .message button[type="submit"] {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .message button[type="submit"]:hover {
-    background-color: #0056b3;
-  }
-  
+}
+.btn {
+  margin: 2px;
+  padding: 12px;
+  color: white;
+  font-weight: 500;
+  border: 1px solid white;
+  background-color: #3d3d3d;
+  width: 61px;
+  height: 38px;
+  border-radius: 10px;
+}

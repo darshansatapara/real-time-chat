@@ -1,0 +1,116 @@
+/* RegistrationLogin.css */
+
+.mainContainer{
+  min-height: 700px;
+}
+/* Common styles for both pages */
+.login-container,
+.register-container {
+  /* max-width: 400px; */
+  width: 420px;
+  /* height: 400px; */
+  margin: 40px auto;
+  min-height: 200px;
+  padding: 30px;
+  border-radius: 10px;
+  background-color: #1a1a1a;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  text-align: center; 
+}
+
+.heading-register {
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  color: #ffffff;
+}
+
+.not-account {
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+.not-account span {
+  color: #4caf50;
+  cursor: pointer;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+label {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #333333;
+  color: #ffffff;
+  font-size: 1.2rem;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4caf50;
+  color: #ffffff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+/* Specific styles for registration page */
+.register-container {
+  background-color: #d87e24c4;
+}
+.register-link {
+  font-size: 1rem;
+  color: #cbcecc;
+  cursor: pointer;
+  width: 120px;
+  margin: 10px auto;
+  padding: 5px;
+  height: 30px;
+  border-radius: 8px;
+  background: #302f37;
+  transition: color 0.3s ease;
+}
+
+.register-link:hover {
+  color: #45a049;
+}
+
+/* Specific styles for login page */
+.login-container {
+  background-color: #d87e24c4;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .login-container,
+  .register-container {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  input,
+  button {
+    font-size: 1rem;
+  }
+}

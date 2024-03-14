@@ -1,30 +1,44 @@
-// server.js
-
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-
-const PORT = process.env.PORT || 4000;
-
+const express = require("express");
+const http = require("http");
+const socketIo = require("socket.io");
+const dotenv = require("dotenv");
 const app = express();
+const cors = require("cors");
+const { login, register } = require("./controller/authController"); // Import both login and register functions
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
+});
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
 
-io.on('connection', (socket) => {
-  console.log('New client connected');
+app.use(express.json());
+app.use(cors());
 
-  // Handle new messages
-  socket.on('message', (data) => {
-    // Broadcast message to all clients
-    io.emit('message', data);
+app.post("/login", login);
+app.post("/register", register); // Use the register function as the callback for the /register route
+
+// Socket.io connection handling
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  // Handle incoming messages
+  socket.on("chat message", (message) => {
+    console.log("message: " + message);
+    io.emit("chat message", message); // Broadcast message to all clients
   });
 
   // Handle disconnection
-  socket.on('disconnect', () => {
-    console.log('Client disconnected');
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
   });
 });
 
+const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

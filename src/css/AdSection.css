@@ -2,11 +2,13 @@
 
 /* Styles for desktop screens */
 .ad-section {
-  max-width: 1200px;
-  margin: 0 auto;
   padding: 20px;
+  max-height: calc(100vh - 80px); 
+  overflow-y: auto;
 }
-
+.ad-section::-webkit-scrollbar {
+  display: none;
+}
 .ad-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

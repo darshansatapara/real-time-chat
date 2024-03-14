@@ -23,6 +23,18 @@ const AdSection = () => {
       imageUrl: 'ad3.jpg',
       title: 'Ad Title 3',
       description: 'Description for Ad 3'
+    },
+    {
+      id: 4,
+      imageUrl: 'ad3.jpg',
+      title: 'Ad Title 3',
+      description: 'Description for Ad 3'
+    },
+    {
+      id: 5,
+      imageUrl: 'ad3.jpg',
+      title: 'Ad Title 3',
+      description: 'Description for Ad 3'
     }
   ];
 

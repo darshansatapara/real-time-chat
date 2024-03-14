@@ -2,15 +2,25 @@
 
 .layout {
   display: grid;
-  grid-template-columns: 1fr; /* By default, show only one column */
+  grid-template-columns: minmax(200px, 25%) auto minmax(200px, 25%);
   gap: 20px;
   padding: 20px;
 }
 
+.left-sidebar,
+.right-sidebar {
+  overflow-y: visible; 
+  /*Add vertical scroll*/
+  width: 100%;
+}
 /* Media queries for tablet screens */
 @media screen and (min-width: 768px) {
   .layout {
-    grid-template-columns: 1fr 1fr; /* For tablets, split into two columns */
+    grid-template-columns: 1fr 2fr;
+  }
+  .left-sidebar, .right-sidebar {
+    /* Adjust width as needed */
+    width: auto;
   }
 }
 
@@ -22,14 +32,23 @@
 }
 
 /* Additional styles for mobile screens */
+
+
 @media screen and (max-width: 480px) {
   .layout {
-    grid-template-columns: 1fr; /* For mobile, revert to single column layout */
+    grid-template-columns: 1fr; /* Revert to single column layout */
   }
 
-  .layout > div:nth-child(2),
-  .layout > div:nth-child(3) {
-    display: none; /* Hide ChatScreen and ClubsInfo components */
+  .layout > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .left-sidebar button,
+  .right-sidebar button {
+    margin-top: 10px;
   }
 }
+
 
