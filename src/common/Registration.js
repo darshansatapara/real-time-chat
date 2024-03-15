@@ -4,28 +4,29 @@ import "../css/RegistrationLogin.css";
 import { useNavigate } from "react-router-dom";
 import client from "../axios/axiosFile.js";
 
-const Register = () => {
+const Register = (props) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    enrollment: "",
     password: "",
-    confirmPassword: "",
   });
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Register");
-    if (formData.password !== formData.confirmPassword) {
-      console.log("password dosent match");
-    }
-
     try {
-      const response = await client.post("/register", formData);
-      console.log(response.data);
-      alert("Signup successful!");
-      navigate("/login");
+      const response = await client.post("/api/create", formData);
+      const json = await response.data;
+      console.log(json);
+      if (json.success) {
+        // Save the auth token and redirect
+        localStorage.setItem("token", json.authToken);
+        navigate("/");
+      } else {
+        props.showAlert("Account alrady exist", "danger");
+      }
     } catch (error) {
-      console.log("error");
       console.log(error);
     }
   };
@@ -38,7 +39,7 @@ const Register = () => {
     <div className="mainContainer">
       <div className="register-container">
         <h1 className="heading-register">Register</h1>
-        <form onSubmit={handleSubmit} method="post">
+        <form onSubmit={handleSubmit} className="register" method="post">
           <label htmlFor="name">Name</label>
           <input
             type="text"
@@ -55,6 +56,14 @@ const Register = () => {
             value={formData.email}
             onChange={handleChange}
           />
+          <label htmlFor="text">Enrollment:</label>
+          <input
+            type="text"
+            id="enrollment"
+            name="enrollment"
+            value={formData.enrollment}
+            onChange={handleChange}
+          />
           <label htmlFor="password">Password</label>
           <input
             type="password"
@@ -63,15 +72,6 @@ const Register = () => {
             value={formData.password}
             onChange={handleChange}
           />
-          <label htmlFor="confirmPassword">Confirm Password</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-          />
-
           <button type="submit" className="register-button">
             Register
           </button>

@@ -9,7 +9,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/register" element={<Register />} />
+        <Route path="/create" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/chat/:roomId" element={<ChatScreen />} />

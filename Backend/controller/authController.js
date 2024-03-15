@@ -1,97 +1,128 @@
-const bcrypt = require("bcrypt");
+const express = require("express");
+const User = require("../models/usermodel");
+const { body, validationResult } = require("express-validator");
+const router = express.Router();
+const bcrypt = require("bcryptjs");
+const JWT_secret = "hellomylife$code";
 const jwt = require("jsonwebtoken");
-const db = require("../db/db");
-const router = require("express").Router();
-const { v4: uuidv4 } = require("uuid");
-const dotenv = require("dotenv");
-dotenv.config();
+const fatchuser = require("../middelware/fatchuser");
 
-const register = router.post("/register", async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    console.log(name, email, password);
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        message: "name, email, password are required.",
+//rout1:create a user
+const Register = router.post(
+  "/api/create",
+  [
+    // Validate request body
+    body("name", "Enter a valid name").isLength({ min: 3 }),
+    body("email", "Enter a valid email id").isEmail(),
+    body("enrollment", "Enter a valid enrollment id").isLength({ min: 13, max: 13 }),
+    body("password", "Password must be at least 5 characters").isLength({ min: 5 }),
+  ],
+  async (req, res) => {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      // Check if email already exists
+      let user = await User.findOne({ email: req.body.email });
+      if (user) {
+        return res.status(400).json({ error: "This email is already registered." });
+      }
+
+      // Hash the password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+      // Create a new user
+      user = await User.create({
+        name: req.body.name,
+        password: hashedPassword,
+        enrollment: req.body.enrollment,
+        email: req.body.email,
       });
+
+      // Create JWT token
+      const token = jwt.sign({ userId: user._id }, JWT_secret, { expiresIn: '1h' });
+
+      // Respond with the token
+      res.json({ token });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal server error");
+    }
+  }
+);
+//rout2:  user login by, /login
+const login = router.post(
+  "/login",
+  [
+    body("email", "Enter valid email").isEmail(),
+    body("enrollment", "Enter valid enrollment").exists(),
+    body("password", "password is require").exists(),
+  ],
+  async (req, res) => {
+    //check the error
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    const hashPassword = await bcrypt.hash(password[0], 10);
-    const userId = uuidv4(); // Generate a unique user ID
-    const insertUserQuery =
-      "INSERT INTO users (username ,email,password) VALUES (?, ?, ?)";
-    db.query(insertUserQuery, [name, email, hashPassword], (err) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({ message: "Internal server error." });
+    // match the user email and pass word
+    const { email, enrollment, password } = req.body;
+    try {
+      let user = await User.findOne({ enrollment, email });
+      let success = false;
+      if (!user) {
+        success = false;
+        return res
+          .status(400)
+          .json({ success, error: "please try with correct credentials " });
       }
-      return res
-        .status(201)
-        .json({ message: "User registered successfully.", userId });
-    });
-    // res.json();
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "An error occurred during registration" });
-  }
-});
 
-const login = router.post("/login", async (req, res) => {
-  try {
-
-    const { email, password } = req.body;
-
-    
-    db.query(
-      "SELECT * FROM users WHERE email = ?",
-      [email],
-      async (err, result) => {
-        if (err) {
-          return res
-            .status(500)
-            .json({ error: "An error occurred during login" });
-        }
-
-        if (result.length === 0) {
-          return res.status(404).json({ message: "User not found." });
-        }
-
-        const user = result[0];
-
-        const passwordMatch = await bcrypt.compare(password, user.password);
-
-        if (!passwordMatch) {
-          return res
-            .status(401)
-            .json({ message: "Invalid email or password." });
-        }
-
-        const token = jwt.sign({ id: user.id }, process.env.JWT_TOKEN, {
-          expiresIn: "1h",
+      const passwordCompare = bcrypt.compare(password, user.password);
+      if (!passwordCompare) {
+        success = false;
+        return res.status(400).json({
+          success,
+          errors: "Please try to login with correct credentials",
         });
-
-        res.status(200).json({ success: true, token });
       }
-    );
+
+      const data = {
+        user: {
+          id: user.id,
+        },
+      };
+      const authtoken = jwt.sign(data, JWT_secret);
+      // generate the auth token
+      success = true;
+      return res.send({ success, authtoken });
+    } catch (error) {
+      //if internal error is availble we throw an error
+      console.error(error.message);
+      return res.status(500).send("Interanl server error");
+    }
+  }
+);
+
+// rout 3: get loggedin user details using: post "/api/auth/getuser", log in require
+
+const getuser = router.post("/getuser", fatchuser, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    let user = await User.findById(userId).select("-password");
+
+    res.send(user);
   } catch (error) {
-    res.status(500).json({ error: "An error occurred during login" });
+    console.error(error.message);
+    return res.status(500).send("Internal server error");
   }
 });
-// GET user by ID
-router.get("/users/:id", async (req, res) => {
-  const userId = req.params.id;
 
-  const sql = "SELECT * FROM users WHERE id = ?";
-  db.query(sql, [userId], (err, result) => {
-    if (err) {
-      return res.status(500).json({ message: "Internal server error." });
-    }
-    if (result.length === 0) {
-      return res.status(404).json({ message: "User not found." });
-    }
-    const user = result[0];
-    res.status(200).json(user);
-  });
-});
-
-module.exports = { login, register };
+module.exports = {
+  getuser,
+  login,
+  Register,
+};

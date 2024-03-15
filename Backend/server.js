@@ -1,10 +1,9 @@
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
-const dotenv = require("dotenv");
+const { query } = require("express-validator");
 const app = express();
 const cors = require("cors");
-const { login, register } = require("./controller/authController"); // Import both login and register functions
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
@@ -19,10 +18,8 @@ app.get("/", (req, res) => {
 app.use(express.json());
 app.use(cors());
 
-app.post("/login", login);
-app.post("/register", register); // Use the register function as the callback for the /register route
 
-// Socket.io connection handling
+
 io.on("connection", (socket) => {
   console.log("A user connected");
 

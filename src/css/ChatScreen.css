@@ -49,7 +49,7 @@ body {
   float: right;
 }
 
-input[type="text" i] {
+#messageInp {
   width: 89%;
   padding: 5px;
   height: 25px;

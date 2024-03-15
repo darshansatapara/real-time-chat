@@ -1,20 +1,15 @@
-require('dotenv').config();
-const mysql = require("mysql");
-const password = process.env.PASSWORD;
+const mongoose = require('mongoose');
+const mongoURI = "mongodb+srv://sataparad1:darshmongo%40286@clustercommunity.xmtg3xd.mongodb.net/"
 
-const db = mysql.createConnection({   
-  host: "localhost",
-  user: "root",
-  password: password,
-  database: "logindata",
-});
-
-db.connect((err) => {
-  if (err) {
-    console.error('Error connecting to database:', err);
-    return;
-  }
-  console.log('Connected to database');
-});
-
-module.exports = db;
+const connectToMongo = async () => {
+try {
+    mongoose.set('strictQuery', false)
+    mongoose.connect(mongoURI) 
+    console.log('Mongo connected')
+}
+catch(error) {
+    console.log(error)
+    process.exit()
+}
+}
+module.exports = connectToMongo;

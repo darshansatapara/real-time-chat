@@ -3,29 +3,32 @@ import "../css/RegistrationLogin.css";
 import { useNavigate } from "react-router-dom";
 import client from "../axios/axiosFile";
 
-const Login = () => {
+const Login = (props) => {
   const navigate = useNavigate();
   const [values, setValues] = useState({
     email: "",
     password: "",
+    enrollment: "",
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await client.post("/login", values);
-      if (response.data.success) {
-        navigate("/");
-      } else {
-        alert(response.data.message);
-      }
-    } catch (error) {
-      console.log("Error:", error);
-      console.log("Error response data:", error.response.data); 
+    const response = await client.post("/login", {
+      body: JSON.stringify({
+        values,
+      }),
+    });
+    const json = await response.json();
+
+    if (json.success) {
+      // Save the auth token and redirect
+      localStorage.setItem("token", json.authtoken);
+      props.showAlert("Logged in successfully", "success");
+      navigate("/");
+    } else {
+      props.showAlert("Invalid credentials", "danger");
     }
   };
-  
-  
 
   const handleInput = (e) => {
     setValues((ele) => ({ ...ele, [e.target.name]: e.target.value }));
@@ -53,7 +56,17 @@ const Login = () => {
               value={values.password}
               onChange={handleInput}
             />
-            <button type="submit">Login</button>
+            <label htmlFor="text">Enrollment:</label>
+            <input
+              type="text"
+              id="enrollment"
+              name="enrollment"
+              value={values.enrollment}
+              onChange={handleInput}
+            />
+            <button className="register-button" type="submit">
+              Login
+            </button>
           </form>
           <p className="not-account">
             Don't have an account?
