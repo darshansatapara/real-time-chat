@@ -6,16 +6,25 @@ const socket = io("http://localhost:8000");
 const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
-  const [currentUser, setCurrentUser] = useState(""); // Track the current user
+  const [currentUser, setCurrentUser] = useState({}); // Track the current user
 
   useEffect(() => {
-    // Mocking current user (you should implement your own authentication mechanism)
-    setCurrentUser("User123");
+    // Retrieve the current user information from browser's storage or props
+    const loggedInUserId = localStorage.getItem("userId"); // Assuming you store user ID in localStorage
+    if (loggedInUserId) {
+      socket.emit("joinChat", loggedInUserId);
 
-    // Listen for incoming messages
-    socket.on("chat message", (msg) => {
-      setMessages((prevMessages) => [...prevMessages, msg]);
-    });
+      // Listen for user data from the server
+      socket.on("userData", (userData) => {
+        setCurrentUser(userData);
+      });
+
+      // Listen for incoming messages
+      socket.on("chat message", (msg) => {
+        console.log("Received message:", msg);
+        setMessages((prevMessages) => [...prevMessages, msg]);
+      });
+    }
 
     return () => {
       socket.disconnect();
@@ -29,13 +38,8 @@ const ChatScreen = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (message.trim()) {
-      // Emit message to server
-      socket.emit("chat message", message);
-      
-      // Add the message to the messages array with the current user
-      setMessages(prevMessages => [...prevMessages, { text: message, user: currentUser }]);
-      
-      // Clear the input field
+      // Emit message to server with current user information
+      socket.emit("chat message", { userId: currentUser._id, text: message });
       setMessage("");
     }
   };
@@ -45,7 +49,7 @@ const ChatScreen = () => {
       <h1 className="Chathead">Community</h1>
       <div className="container">
         {messages.map((msg, index) => (
-          <div key={index} className={msg.user === currentUser ? "message left" : "message right"}>
+          <div key={index} className={msg.user === currentUser.name ? "message left" : "message right"}>
             {msg.text}
           </div>
         ))}

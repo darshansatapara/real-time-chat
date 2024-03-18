@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const mongoURI = "mongodb+srv://sataparad1:darshmongo%40286@clustercommunity.xmtg3xd.mongodb.net/"
-
+const mongoURI = "mongodb+srv://darshan:darshan@cluster0.2oldjcb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+// darshmongo
 const connectToMongo = async () => {
 try {
     mongoose.set('strictQuery', false)

@@ -6,6 +6,7 @@ import client from "../axios/axiosFile.js";
 
 const Register = (props) => {
   const navigate = useNavigate();
+  const [alertMessage, setAlertMessage] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,17 +15,18 @@ const Register = (props) => {
   });
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Register");
+
     try {
       const response = await client.post("/api/create", formData);
-      const json = await response.data;
+      const json = response.data;
+
       console.log(json);
       if (json.success) {
-        // Save the auth token and redirect
         localStorage.setItem("token", json.authToken);
         navigate("/");
       } else {
-        props.showAlert("Account alrady exist", "danger");
+        console.log("alert");
+        alert("An account with this email already exists.");
       }
     } catch (error) {
       console.log(error);
@@ -32,7 +34,7 @@ const Register = (props) => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: [e.target.value] });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
@@ -75,6 +77,9 @@ const Register = (props) => {
           <button type="submit" className="register-button">
             Register
           </button>
+          {alertMessage && (
+            <div className="alert alert-danger">{alertMessage}</div>
+          )}
         </form>
       </div>
     </div>

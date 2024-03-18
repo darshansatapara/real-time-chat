@@ -6,13 +6,14 @@ import Register from "./common/Registration";
 import Login from "./common/Login";
 
 function App() {
+ 
+
   return (
     <Router>
       <Routes>
-        <Route path="/create" element={<Register />} />
-        <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
-        <Route path="/chat/:roomId" element={<ChatScreen />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/create" element={<Register />} />
       </Routes>
     </Router>
   );

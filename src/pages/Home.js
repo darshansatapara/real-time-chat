@@ -1,34 +1,45 @@
-// Home.js
-
-import React, { useEffect, useState } from 'react';
-import AdSection from '../components/AdSection';
-import ChatScreen from '../components/ChatScreen';
-import ClubsInfo from '../components/ClubsInfo';
-import Layout from '../common/Layout';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import AdSection from "../components/AdSection";
+import ChatScreen from "../components/ChatScreen";
+import ClubsInfo from "../components/ClubsInfo";
+import Layout from "../common/Layout";
+import { Link, useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
-  // Function to check if the device is mobile
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // Adjust breakpoint as needed
+      setIsMobile(window.innerWidth <= 768);
     };
-
-    // Add event listener for window resize
-    window.addEventListener('resize', handleResize);
-
-    // Initial check on component mount
+    window.addEventListener("resize", handleResize);
     handleResize();
-
-    // Clean up event listener on component unmount
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
-  return (
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if(!isLoggedIn){
+      navigate("/login")
+    }
+    if (token) {
+      setIsLoggedIn(true);
+      navigate("/");
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+  };
+
+  return isLoggedIn ? (
     <Layout>
       <div className={isMobile ? "full-width" : "left-sidebar"}>
         <AdSection />
@@ -47,6 +58,8 @@ const Home = () => {
         <ClubsInfo />
       </div>
     </Layout>
+  ) : (
+    navigate("/login")
   );
 };
 

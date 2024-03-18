@@ -1,21 +1,24 @@
 const jwt = require("jsonwebtoken");
-const express = require('express');
-
 const JWT_secret = "hellomylife$code";
 
 const fatchuser = (req, res, next) => {
-  //get token from the jwt token  and add id to req join
-  const token = req.header('auth-token');
-
+  // Get token from the request headers
+  const token = req.header("JWT_secret");
+  console.log(token);
+  // Check if token exists
   if (!token) {
-    res.status(401).send('please authenticate valid informstion'); 
+    return res.status(401).send("Please provide a valid authentication token");
   }
+
   try {
+    // Verify the token and extract user data
     const data = jwt.verify(token, JWT_secret);
     req.user = data.user;
+    // Call next middleware or route handler
     next();
   } catch (error) {
-    res.status(401).send('please authenticate valid informstion'); 
+    // Handle token verification errors
+    return res.status(401).send("Invalid or expired authentication token");
   }
 };
 

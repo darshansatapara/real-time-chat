@@ -9,10 +9,13 @@ app.use(cors());
 app.use(express.json())
 
 connectToMongo();
+
+const authRoute = require("./controller/authController")
+
 const port = 5000;
 
-app.use("api/login", login);
-app.use("/api/create", Register);
+app.use("/api", authRoute);
+
 
 app.listen(port, () => {
   console.log(`inotoodo back-end listening on port http://localhost:${port}`)

@@ -13,25 +13,27 @@ const Login = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await client.post("/login", {
-      body: JSON.stringify({
-        values,
-      }),
-    });
-    const json = await response.json();
-
-    if (json.success) {
-      // Save the auth token and redirect
-      localStorage.setItem("token", json.authtoken);
-      props.showAlert("Logged in successfully", "success");
-      navigate("/");
-    } else {
-      props.showAlert("Invalid credentials", "danger");
+    try {
+      const response = await client.post("/api/login", values);
+      const json = response.data;
+      const token = response.data.token;
+      console.log(token);
+      if (json.success) {
+        localStorage.setItem("token", token);
+        alert("Logged in successfully", "success");
+        navigate("/");
+      } else {
+        alert("Invalid credentials", "danger");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred while logging in", "danger");
     }
   };
+  
 
   const handleInput = (e) => {
-    setValues((ele) => ({ ...ele, [e.target.name]: e.target.value }));
+    setValues((values) => ({ ...values, [e.target.name]: e.target.value }));
   };
 
   return (
@@ -71,7 +73,7 @@ const Login = (props) => {
           <p className="not-account">
             Don't have an account?
             <span
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/create")}
               className="register-link "
             >
               Register here

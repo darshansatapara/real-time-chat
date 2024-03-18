@@ -1,41 +1,32 @@
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
-const { query } = require("express-validator");
-const app = express();
 const cors = require("cors");
+const connectToMongo = require('./db/db');
+const configureSocket = require('./middelware/chatSocket');
+const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-  },
-});
-app.get("/", (req, res) => {
-  res.send("Hello World!");
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+    },
 });
 
 app.use(express.json());
 app.use(cors());
 
+// Configure MongoDB connection
+connectToMongo();
 
+// Configure socket
+configureSocket(io);
 
-io.on("connection", (socket) => {
-  console.log("A user connected");
-
-  // Handle incoming messages
-  socket.on("chat message", (message) => {
-    console.log("message: " + message);
-    io.emit("chat message", message); // Broadcast message to all clients
-  });
-
-  // Handle disconnection
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
+app.get("/", (req, res) => {
+    res.send("Hello World!");
 });
 
 const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
