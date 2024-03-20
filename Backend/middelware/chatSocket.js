@@ -14,7 +14,10 @@ const configureSocket = (io) => {
         }
 
         // You can send additional user information if needed
-        socket.emit("userData", { name: user.name, email: user.email });
+        socket.broadcast.emit("userData", {
+          name: user.name,
+          email: user.email,
+        });
       } catch (error) {
         console.error("Error while fetching user:", error);
       }
@@ -30,7 +33,10 @@ const configureSocket = (io) => {
         }
 
         // Emit message with user information
-        io.emit("chat message", { user: user.name, text: messageData.text });
+        socket.broadcast.emit("chat message", {
+          user: user.name,
+          text: messageData.text,
+        });
       } catch (error) {
         console.error("Error while fetching user:", error);
       }

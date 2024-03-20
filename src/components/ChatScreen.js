@@ -39,9 +39,14 @@ const ChatScreen = () => {
     e.preventDefault();
     if (message.trim()) {
       // Emit message to server with current user information
-      socket.emit("chat message", { userId: currentUser._id, text: message });
+      socket.emit("chat message", { userId: currentUser.id, text: message });
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { user: currentUser.name, text: message },
+      ]);
       setMessage("");
     }
+    console.log("Received message:", message);
   };
 
   return (
@@ -49,14 +54,25 @@ const ChatScreen = () => {
       <h1 className="Chathead">Community</h1>
       <div className="container">
         {messages.map((msg, index) => (
-          <div key={index} className={msg.user === currentUser.name ? "message left" : "message right"}>
+          <div
+            key={index}
+            className={
+              msg.user === currentUser.name ? "message left" : "message right"
+            }
+          >
             {msg.text}
           </div>
         ))}
       </div>
       <div className="send">
         <form action="#" id="send-container" onSubmit={handleSubmit}>
-          <input type="text" name="messageInp" onChange={handleMessageChange} value={message} id="messageInp" />
+          <input
+            type="text"
+            name="messageInp"
+            onChange={handleMessageChange}
+            value={message}
+            id="messageInp"
+          />
           <button className="btn" type="submit">
             Send
           </button>

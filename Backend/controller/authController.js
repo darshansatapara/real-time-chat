@@ -30,7 +30,28 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
+    // Function to generate a unique user ID as a number
+    const generateUserId = async () => {
+      try {
+        // Find the latest user in the database to get the highest user ID
+        const latestUser = await User.findOne().sort({ _id: -1 }).limit(1);
+
+        let userId = 1; // Default user ID if no user exists yet
+
+        // If there is a latest user, increment its ID to generate the new ID
+        if (latestUser) {
+          userId = latestUser._id + 1;
+        }
+
+        return userId;
+      } catch (error) {
+        console.error("Error generating user ID:", error);
+        throw error;
+      }
+    };
     try {
+      // Generate a unique user ID
+      const userId = await generateUserId();
       // Check if email already exists
       let user = await User.findOne({ email: req.body.email });
       if (user) {
@@ -44,8 +65,9 @@ router.post(
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-      // Create a new user
+      // Create a new user with the generated user ID
       user = await User.create({
+        id: userId,
         name: req.body.name,
         password: hashedPassword,
         enrollment: req.body.enrollment,
@@ -53,11 +75,9 @@ router.post(
       });
 
       // Create JWT token
-      const token = jwt.sign({ userId: user._id }, JWT_secret, {
+      const token = jwt.sign({ userId: user.id }, JWT_secret, {
         expiresIn: "3h",
       });
-      console.log(token);
-
       // Respond with the token
       res.json({ token });
     } catch (error) {
@@ -84,43 +104,36 @@ router.post(
     body("password", "password is require").exists(),
   ],
   async (req, res) => {
-    //check the error
+    // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    // match the user email and pass word
+    // Match the user email and password
     const { email, enrollment, password } = req.body;
     try {
-      let user = await User.findOne({ enrollment, email });
-      let success = false;
+      // Retrieve the user from the database
+      const user = await User.findOne({ enrollment, email });
       if (!user) {
-        success = false;
-        return res
-          .status(400)
-          .json({ success, error: "please try with correct credentials " });
+        return res.status(400).json({ error: "Invalid credentials" });
       }
 
-      const passwordCompare = bcrypt.compare(password, user.password);
+      const passwordCompare = await bcrypt.compare(password, user.password);
       if (!passwordCompare) {
-        success = false;
-        return res.status(400).json({
-          success,
-          errors: "Please try to login with correct credentials",
-        });
+        return res.status(400).json({ error: "Invalid credentials" });
       }
-      // generate the auth token
+
+      // Create JWT token
       const token = jwt.sign({ userId: user.id }, JWT_secret, {
         expiresIn: "3h",
       });
-      success = true;
 
-      return res.send({ success, token });
+      // Return user ID and token
+      return res.json({ userId: user.id, token });
     } catch (error) {
-      //if internal error is availble we throw an error
       console.error(error.message);
-      return res.status(500).send("Interanl server error");
+      return res.status(500).send("Internal server error");
     }
   }
 );
@@ -137,7 +150,7 @@ router.post("/getuser", fatchuser, async (req, res) => {
     }
 
     // Generate token
-    const token = jwt.sign({ userId: user._id }, secretKey, {
+    const token = jwt.sign({ userId: user.id }, secretKey, {
       expiresIn: "3h",
     });
 
