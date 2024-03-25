@@ -14,7 +14,7 @@ const configureSocket = (io) => {
         }
 
         // You can send additional user information if needed
-        socket.broadcast.emit("userData", {
+        socket.emit("userData", {
           name: user.name,
           email: user.email,
         });
@@ -33,7 +33,7 @@ const configureSocket = (io) => {
         }
 
         // Emit message with user information
-        socket.broadcast.emit("chat message", {
+        socket.emit("chat message", {
           user: user.name,
           text: messageData.text,
         });

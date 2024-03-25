@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../css/ChatScreen.css";
 import io from "socket.io-client";
+import client from "../axios/axiosFile";
 const socket = io("http://localhost:8000");
 
 const ChatScreen = () => {
@@ -9,9 +10,12 @@ const ChatScreen = () => {
   const [currentUser, setCurrentUser] = useState({}); // Track the current user
 
   useEffect(() => {
-    // Retrieve the current user information from browser's storage or props
-    const loggedInUserId = localStorage.getItem("userId"); // Assuming you store user ID in localStorage
-    if (loggedInUserId) {
+    const token = localStorage.getItem("token");
+    const loggedInUserId = localStorage.getItem("userId");
+
+    if (token && loggedInUserId) {
+      // Assuming you have a route to authenticate users
+      client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       socket.emit("joinChat", loggedInUserId);
 
       // Listen for user data from the server
@@ -30,6 +34,11 @@ const ChatScreen = () => {
       socket.disconnect();
     };
   }, []);
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    // Other logout logic such as redirecting to login page, etc.
+  };
 
   const handleMessageChange = (e) => {
     setMessage(e.target.value);

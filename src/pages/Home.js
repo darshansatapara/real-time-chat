@@ -7,8 +7,6 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [isMobile, setIsMobile] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -21,25 +19,7 @@ const Home = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if(!isLoggedIn){
-      navigate("/login")
-    }
-    if (token) {
-      setIsLoggedIn(true);
-      navigate("/");
-    } else {
-      setIsLoggedIn(false);
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-  };
-
-  return isLoggedIn ? (
+  return (
     <Layout>
       <div className={isMobile ? "full-width" : "left-sidebar"}>
         <AdSection />
@@ -58,9 +38,6 @@ const Home = () => {
         <ClubsInfo />
       </div>
     </Layout>
-  ) : (
-    navigate("/login")
   );
 };
-
 export default Home;

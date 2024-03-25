@@ -3,7 +3,6 @@ import "../css/RegistrationLogin.css";
 import { useNavigate } from "react-router-dom";
 import client from "../axios/axiosFile";
 
-
 const Login = (props) => {
   const navigate = useNavigate();
   const [values, setValues] = useState({
@@ -11,20 +10,19 @@ const Login = (props) => {
     password: "",
     enrollment: "",
   });
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await client.post("/api/login", values);
       const json = response.data;
       const token = response.data.token;
-      console.log(token);
+      // After successful login
       if (json.success) {
         localStorage.setItem("token", token);
+        localStorage.setItem("userId", json.userId);
         alert("Logged in successfully", "success");
         navigate("/");
-      } else {
-        alert("Invalid credentials", "danger");
+        console.log(token);
       }
     } catch (error) {
       console.error(error);

@@ -95,6 +95,7 @@ router.post(
     }
   }
 );
+
 //rout2:  user login by, /login
 router.post(
   "/login",
@@ -104,40 +105,46 @@ router.post(
     body("password", "password is require").exists(),
   ],
   async (req, res) => {
-    // Check for validation errors
+    //check the error
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    // Match the user email and password
+    // match the user email and pass word
     const { email, enrollment, password } = req.body;
     try {
-      // Retrieve the user from the database
-      const user = await User.findOne({ enrollment, email });
+      let user = await User.findOne({ enrollment, email });
+      let success = false;
       if (!user) {
-        return res.status(400).json({ error: "Invalid credentials" });
+        success = false;
+        return res
+          .status(400)
+          .json({ success, error: "please try with correct credentials " });
       }
 
-      const passwordCompare = await bcrypt.compare(password, user.password);
+      const passwordCompare = bcrypt.compare(password, user.password);
       if (!passwordCompare) {
-        return res.status(400).json({ error: "Invalid credentials" });
+        success = false;
+        return res.status(400).json({
+          success,
+          errors: "Please try to login with correct credentials",
+        });
       }
-
-      // Create JWT token
+      // generate the auth token
       const token = jwt.sign({ userId: user.id }, JWT_secret, {
         expiresIn: "3h",
       });
-
-      // Return user ID and token
-      return res.json({ userId: user.id, token });
+      success = true;   
+      // return res.json({ userId: user.id, token });
+      return res.send({ success, userId: user.id, token });
     } catch (error) {
+      //if internal error is availble we throw an error
       console.error(error.message);
-      return res.status(500).send("Internal server error");
+      return res.status(500).send("Interanl server error");
     }
   }
 );
-
 // rout 3: get loggedin user details using: post "/api/auth/getuser", log in require
 
 router.post("/getuser", fatchuser, async (req, res) => {
